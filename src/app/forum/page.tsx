@@ -225,9 +225,11 @@ export default function ForumPage() {
         </div>
       )}
 
+      </div>
+
       {/* Create thread modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-fade-in">
           <div
             className="absolute inset-0 bg-navy/60 backdrop-blur-md"
             onClick={() => setShowCreateModal(false)}
@@ -319,7 +321,6 @@ export default function ForumPage() {
           </div>
         </div>
       )}
-      </div>
     </div>
   );
 }

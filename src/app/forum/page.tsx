@@ -231,10 +231,10 @@ export default function ForumPage() {
       {showCreateModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-fade-in">
           <div
-            className="absolute inset-0 bg-navy/60 backdrop-blur-md"
+            className="absolute inset-0 bg-navy/80 backdrop-blur-md"
             onClick={() => setShowCreateModal(false)}
           />
-          <div className="relative glass-panel rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto border border-white/40">
+          <div className="relative bg-krem rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto border border-black/10">
             <div className="p-6 md:p-8">
               <h2 className="font-serif text-2xl font-bold text-marun-dark mb-6">
                 ✏️ Buat Pertanyaan Baru

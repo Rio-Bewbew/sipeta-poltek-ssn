@@ -20,7 +20,7 @@ export default function RootLayout({
       <body className="min-h-screen flex flex-col bg-transparent text-teks antialiased">
         <AnimatedBackground />
         <Navbar />
-        <main className="flex-1 relative z-0">{children}</main>
+        <main className="flex-1">{children}</main>
         <Footer />
       </body>
     </html>

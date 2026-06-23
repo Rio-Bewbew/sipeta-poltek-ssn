@@ -36,7 +36,6 @@ export default function AdminMateri() {
             <thead className="bg-black/20 text-white/50 border-b border-white/10">
               <tr>
                 <th className="px-6 py-4 font-semibold">Judul Modul</th>
-                <th className="px-6 py-4 font-semibold">Estimasi Waktu</th>
                 <th className="px-6 py-4 font-semibold text-right">Aksi</th>
               </tr>
             </thead>
@@ -44,10 +43,9 @@ export default function AdminMateri() {
               {materiModules.map((materi) => (
                 <tr key={materi.id} className="border-b border-white/5">
                   <td className="px-6 py-4">
-                    <p className="font-medium text-white mb-1">{materi.title}</p>
-                    <p className="text-xs text-white/40">{materi.description.substring(0, 50)}...</p>
+                    <p className="font-medium text-white mb-1">{materi.judul}</p>
+                    <p className="text-xs text-white/40">{materi.ringkasan.substring(0, 50)}...</p>
                   </td>
-                  <td className="px-6 py-4">{materi.estimatedTime}</td>
                   <td className="px-6 py-4 text-right">
                     <button className="text-emas/50 hover:text-emas mr-3">Edit</button>
                     <button className="text-bahaya/50 hover:text-bahaya">Hapus</button>

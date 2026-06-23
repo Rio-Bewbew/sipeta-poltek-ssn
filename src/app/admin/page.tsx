@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/db";
 import { materiModules } from "@/data/materi";
-import { cases } from "@/data/kasus";
-import { kuisData } from "@/data/kuis";
+import { caseStudies } from "@/data/kasus";
+import { quizQuestions } from "@/data/kuis";
 
 export const dynamic = "force-dynamic";
 
@@ -94,7 +94,7 @@ export default async function AdminDashboard() {
             </div>
             <div className="flex justify-between items-center text-sm mt-2">
               <span className="text-white/50">Jumlah:</span>
-              <span className="text-white">{cases.length} Skenario</span>
+              <span className="text-white">{caseStudies.length} Skenario</span>
             </div>
           </div>
 
@@ -106,7 +106,7 @@ export default async function AdminDashboard() {
             </div>
             <div className="flex justify-between items-center text-sm mt-2">
               <span className="text-white/50">Jumlah:</span>
-              <span className="text-white">{kuisData.length} Soal</span>
+              <span className="text-white">{quizQuestions.length} Soal</span>
             </div>
           </div>
         </div>

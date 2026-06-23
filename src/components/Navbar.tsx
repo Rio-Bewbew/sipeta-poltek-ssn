@@ -26,6 +26,8 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  if (pathname.startsWith("/admin")) return null;
+
   return (
     <div className="sticky top-4 z-50 px-4 sm:px-6 lg:px-8 transition-all duration-300">
       <motion.header 

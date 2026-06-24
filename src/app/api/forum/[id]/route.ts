@@ -1,7 +1,8 @@
 import { prisma } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
-// GET /api/forum/[id] — get single thread with replies
+// GET /api/forum/[id] — get single thread with replies (PUBLIK)
+// Identitas asli (authorReal) tidak pernah dibagikan ke publik.
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -24,10 +25,31 @@ export async function GET(
     );
   }
 
-  return NextResponse.json(thread);
+  // Buang authorReal sebelum dikirim ke publik
+  const safe = {
+    id: thread.id,
+    title: thread.title,
+    content: thread.content,
+    author: thread.author,
+    isAnonymous: thread.isAnonymous,
+    category: thread.category,
+    isAnswered: thread.isAnswered,
+    createdAt: thread.createdAt,
+    replies: thread.replies.map((r) => ({
+      id: r.id,
+      content: r.content,
+      author: r.author,
+      isAnonymous: r.isAnonymous,
+      isPengasuh: r.isPengasuh,
+      upvotes: r.upvotes,
+      createdAt: r.createdAt,
+    })),
+  };
+
+  return NextResponse.json(safe);
 }
 
-// POST /api/forum/[id] — add reply to thread
+// POST /api/forum/[id] — add reply to thread (oleh taruna/publik)
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -36,7 +58,7 @@ export async function POST(
 
   try {
     const body = await request.json();
-    const { content, author } = body;
+    const { content, author, isAnonymous } = body;
 
     if (!content || !author) {
       return NextResponse.json(
@@ -46,10 +68,7 @@ export async function POST(
     }
 
     // Check thread exists
-    const thread = await prisma.thread.findUnique({
-      where: { id },
-    });
-
+    const thread = await prisma.thread.findUnique({ where: { id } });
     if (!thread) {
       return NextResponse.json(
         { error: "Thread tidak ditemukan" },
@@ -57,14 +76,28 @@ export async function POST(
       );
     }
 
-    const reply = await prisma.reply.create({
-      data: {
-        content,
-        author,
-        threadId: id,
-        isPengasuh: false,
-      },
-    });
+    const anon = Boolean(isAnonymous);
+
+    // Create the reply and update the thread's read/answered status in a transaction
+    const [reply] = await prisma.$transaction([
+      prisma.reply.create({
+        data: {
+          content,
+          author: anon ? "Anonim" : author,
+          authorReal: author,
+          isAnonymous: anon,
+          threadId: id,
+          isPengasuh: false,
+        },
+      }),
+      prisma.thread.update({
+        where: { id },
+        data: {
+          isRead: false,
+          isAnswered: false,
+        },
+      }),
+    ]);
 
     return NextResponse.json(reply, { status: 201 });
   } catch {

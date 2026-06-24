@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
-// GET /api/forum — list all threads
+// GET /api/forum — list all threads (publik; identitas asli TIDAK dibagikan)
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const category = searchParams.get("category");
@@ -27,11 +27,14 @@ export async function GET(request: NextRequest) {
     id: t.id,
     title: t.title,
     content: t.content,
+    // author sudah disimpan sebagai "Anonim" bila anonim — aman untuk publik
     author: t.author,
+    isAnonymous: t.isAnonymous,
     category: t.category,
     createdAt: t.createdAt.toISOString(),
     replyCount: t._count.replies,
     hasPengasuhReply: t.replies.length > 0,
+    isAnswered: t.isAnswered,
   }));
 
   return NextResponse.json(formatted);
@@ -41,7 +44,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { title, content, author, category } = body;
+    const { title, content, author, category, isAnonymous } = body;
 
     if (!title || !content || !author || !category) {
       return NextResponse.json(
@@ -50,15 +53,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const anon = Boolean(isAnonymous);
+
     const thread = await prisma.thread.create({
-      data: { title, content, author, category },
+      data: {
+        title,
+        content,
+        category,
+        // Nama publik disamarkan bila anonim; identitas asli disimpan di authorReal
+        author: anon ? "Anonim" : author,
+        authorReal: author,
+        isAnonymous: anon,
+        isRead: false,
+        isAnswered: false,
+      },
     });
 
     return NextResponse.json(thread, { status: 201 });
   } catch {
-    return NextResponse.json(
-      { error: "Gagal membuat thread" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Gagal membuat thread" }, { status: 500 });
   }
 }

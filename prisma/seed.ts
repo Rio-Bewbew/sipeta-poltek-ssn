@@ -9,18 +9,23 @@ async function main() {
   await prisma.reply.deleteMany();
   await prisma.thread.deleteMany();
 
-  // Thread 1
+  // Thread 1 — sudah dibaca & sudah dijawab
   const thread1 = await prisma.thread.create({
     data: {
       title: "Bagaimana cara menegur junior yang benar?",
       category: "Metode Pembinaan",
       author: "Taruna Ahmad",
+      authorReal: "Taruna Ahmad",
+      isAnonymous: false,
+      isRead: true,
+      isAnswered: true,
       content:
         "Saya ingin bertanya, bagaimana cara yang tepat untuk menegur junior yang melakukan kesalahan? Terkadang saya bingung antara bersikap tegas tapi tetap mendidik. Apakah ada panduan dari peraturan yang bisa dijadikan acuan?",
       replies: {
         create: [
           {
             author: "Pengasuh Cpt. Budi",
+            authorReal: "Pengasuh Cpt. Budi",
             content:
               'Pertanyaan yang sangat baik. Berdasarkan Pasal 43, pembinaan harus dilakukan dengan cara baik, bijak, terpuji, dan mendidik. Langkah yang tepat: (1) Tegur secara pribadi, bukan di depan umum, (2) Jelaskan kesalahan dengan merujuk aturan, (3) Berikan solusi dan arahan, (4) Catat melalui evaluasi resmi jika diperlukan. Yang penting, hindari kontak fisik dan tindakan yang merendahkan.',
             isPengasuh: true,
@@ -28,6 +33,7 @@ async function main() {
           },
           {
             author: "Taruna Sari",
+            authorReal: "Taruna Sari",
             content:
               "Terima kasih Pak. Saya juga pernah mengalami situasi serupa. Yang saya lakukan adalah mendekati junior secara personal dan menjelaskan mengapa perilakunya perlu diperbaiki, sambil menunjukkan contoh yang benar.",
             isPengasuh: false,
@@ -39,18 +45,23 @@ async function main() {
   });
   console.log(`  ✅ Thread 1 created: ${thread1.id}`);
 
-  // Thread 2
+  // Thread 2 — sudah dibaca & sudah dijawab
   const thread2 = await prisma.thread.create({
     data: {
       title: "Apakah push up anyam termasuk pelanggaran?",
       category: "Larangan Kekerasan",
       author: "Taruna Dimas",
+      authorReal: "Taruna Dimas",
+      isAnonymous: false,
+      isRead: true,
+      isAnswered: true,
       content:
         'Saya dengar bahwa push up anyam sudah menjadi "tradisi" di beberapa angkatan sebelumnya. Apakah ini masih diperbolehkan? Beberapa senior bilang ini bentuk pembinaan fisik yang wajar.',
       replies: {
         create: [
           {
             author: "Pengasuh Lt. Rina",
+            authorReal: "Pengasuh Lt. Rina",
             content:
               "Push up anyam TERMASUK pelanggaran. Berdasarkan Pasal 50 ayat 5, Taruna dilarang mengembangkan tradisi yang menyimpang dari norma dan peraturan. Push up anyam, sikap tobat, dan gaya meroket adalah contoh tradisi menyimpang yang dilarang. Tidak ada pembenaran untuk tradisi yang dapat merugikan/mencederai Taruna, seberapapun lamanya tradisi tersebut sudah berlangsung.",
             isPengasuh: true,
@@ -62,19 +73,23 @@ async function main() {
   });
   console.log(`  ✅ Thread 2 created: ${thread2.id}`);
 
-  // Thread 3
+  // Thread 3 — sudah dibaca & sudah dijawab
   const thread3 = await prisma.thread.create({
     data: {
-      title:
-        "Prosedur konfirmasi peminjaman kunci ke Satuan Pengasuhan",
+      title: "Prosedur konfirmasi peminjaman kunci ke Satuan Pengasuhan",
       category: "Prosedur & Izin",
       author: "Taruna Fitri",
+      authorReal: "Taruna Fitri",
+      isAnonymous: false,
+      isRead: true,
+      isAnswered: true,
       content:
         "Mohon penjelasan mengenai prosedur yang benar untuk meminjam kunci ruangan. Apakah harus selalu dikonfirmasi ke Satuan Pengasuhan? Bagaimana jika dalam keadaan mendesak?",
       replies: {
         create: [
           {
             author: "Pengasuh Cpt. Budi",
+            authorReal: "Pengasuh Cpt. Budi",
             content:
               "Sesuai Pasal 59, setiap peminjaman wajib: (1) seizin pemilik/penanggung jawab, (2) dicatat dengan jelas, (3) dikonfirmasi ke Unit Pengasuhan jika menyangkut inventaris dinas. Dalam keadaan mendesak, tetap harus ada konfirmasi — bisa via telepon terlebih dahulu, kemudian disusul dengan pencatatan tertulis. Jangan pernah menghapus atau mengubah catatan peminjaman tanpa konfirmasi resmi.",
             isPengasuh: true,
@@ -82,6 +97,7 @@ async function main() {
           },
           {
             author: "Taruna Galih",
+            authorReal: "Taruna Galih",
             content:
               "Tambahan dari pengalaman saya: selalu foto/screenshot catatan peminjaman sebagai bukti. Ini membantu jika ada pertanyaan di kemudian hari.",
             isPengasuh: false,
@@ -92,6 +108,23 @@ async function main() {
     },
   });
   console.log(`  ✅ Thread 3 created: ${thread3.id}`);
+
+  // Thread 4 — ANONIM, BELUM DIBACA, BELUM DIJAWAB (untuk demo fitur baru)
+  const thread4 = await prisma.thread.create({
+    data: {
+      title: "Senior menyuruh kegiatan fisik sebelum jam bangun, apakah boleh?",
+      category: "Metode Pembinaan",
+      author: "Anonim",
+      authorReal: "Taruna Bagas",
+      isAnonymous: true,
+      isRead: false,
+      isAnswered: false,
+      content:
+        "Izin bertanya secara anonim. Beberapa hari ini senior mengumpulkan kami sebelum jam bangun pagi untuk kegiatan fisik dengan alasan evaluasi. Apakah ini sesuai aturan? Saya ragu melapor karena takut dianggap melawan.",
+      replies: { create: [] },
+    },
+  });
+  console.log(`  ✅ Thread 4 created (anonim, belum dibaca): ${thread4.id}`);
 
   console.log("✅ Seeding complete!");
 }

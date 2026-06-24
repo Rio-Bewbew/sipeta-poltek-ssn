@@ -26,6 +26,7 @@ interface ThreadSummary {
   title: string;
   content: string;
   author: string;
+  isAnonymous: boolean;
   category: string;
   createdAt: string;
   replyCount: number;
@@ -43,6 +44,7 @@ export default function ForumPage() {
   const [newContent, setNewContent] = useState("");
   const [newAuthor, setNewAuthor] = useState("");
   const [newCategory, setNewCategory] = useState("Umum");
+  const [newAnonymous, setNewAnonymous] = useState(false);
   const [creating, setCreating] = useState(false);
 
   const fetchThreads = async (category = "Semua") => {
@@ -77,6 +79,7 @@ export default function ForumPage() {
           content: newContent,
           author: newAuthor,
           category: newCategory,
+          isAnonymous: newAnonymous,
         }),
       });
 
@@ -86,6 +89,7 @@ export default function ForumPage() {
         setNewContent("");
         setNewAuthor("");
         setNewCategory("Umum");
+        setNewAnonymous(false);
         fetchThreads(activeCategory);
       }
     } catch {
@@ -200,7 +204,7 @@ export default function ForumPage() {
                   </h3>
 
                   <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-teks/50">
-                    <span>👤 {thread.author}</span>
+                    <span>{thread.isAnonymous ? "🕶️" : "👤"} {thread.author}</span>
                     <span>💬 {thread.replyCount} balasan</span>
                     <span>🕐 {formatDate(thread.createdAt)}</span>
                   </div>
@@ -299,6 +303,29 @@ export default function ForumPage() {
                     required
                   />
                 </div>
+
+                <label
+                  className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-all ${
+                    newAnonymous
+                      ? "border-emas bg-emas/10"
+                      : "border-black/10 hover:border-emas/40"
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={newAnonymous}
+                    onChange={(e) => setNewAnonymous(e.target.checked)}
+                    className="mt-0.5 w-4 h-4 accent-marun"
+                  />
+                  <span className="text-sm text-teks/80">
+                    <span className="font-semibold">Kirim sebagai Anonim</span>
+                    <span className="block text-xs text-teks/50 mt-0.5">
+                      Nama Anda disembunyikan dari taruna lain (tampil sebagai
+                      &quot;Anonim&quot;). Pengasuh tetap dapat melihat identitas
+                      asli Anda.
+                    </span>
+                  </span>
+                </label>
 
                 <div className="flex gap-3 pt-2">
                   <button

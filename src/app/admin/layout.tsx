@@ -9,6 +9,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
   const router = useRouter();
   const [isAuth, setIsAuth] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
     if (pathname !== "/admin/login") {
@@ -20,6 +21,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       }
     }
   }, [pathname, router]);
+
+  // Hitung pesan baru (belum dibaca) untuk badge notifikasi
+  useEffect(() => {
+    if (!isAuth) return;
+    const loadUnread = () => {
+      fetch("/api/admin/forum")
+        .then((r) => r.json())
+        .then((data: { isRead: boolean }[]) =>
+          setUnreadCount(data.filter((t) => !t.isRead).length)
+        )
+        .catch(() => {});
+    };
+    loadUnread();
+    const interval = setInterval(loadUnread, 15000);
+    return () => clearInterval(interval);
+  }, [isAuth, pathname]);
 
   const handleLogout = () => {
     localStorage.removeItem("sipeta-admin-auth");
@@ -68,6 +85,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 >
                   <span className="text-lg">{item.icon}</span>
                   {item.label}
+                  {item.href === "/admin/forum" && unreadCount > 0 && (
+                    <span className="ml-auto min-w-5 h-5 px-1.5 flex items-center justify-center rounded-full bg-emas text-marun-dark text-[11px] font-bold">
+                      {unreadCount}
+                    </span>
+                  )}
                 </motion.div>
                 {isActive && (
                   <motion.div

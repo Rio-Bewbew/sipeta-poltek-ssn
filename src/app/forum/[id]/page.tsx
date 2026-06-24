@@ -37,6 +37,7 @@ export default function ThreadDetailPage() {
   const [loading, setLoading] = useState(true);
   const [replyContent, setReplyContent] = useState("");
   const [replyAuthor, setReplyAuthor] = useState("");
+  const [replyAnonymous, setReplyAnonymous] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const fetchThread = async () => {
@@ -69,11 +70,13 @@ export default function ThreadDetailPage() {
         body: JSON.stringify({
           content: replyContent,
           author: replyAuthor,
+          isAnonymous: replyAnonymous,
         }),
       });
 
       if (res.ok) {
         setReplyContent("");
+        setReplyAnonymous(false);
         fetchThread();
       }
     } catch {
@@ -289,6 +292,28 @@ export default function ThreadDetailPage() {
               required
             />
           </div>
+
+          <label
+            className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-all ${
+              replyAnonymous
+                ? "border-emas bg-emas/10"
+                : "border-black/10 hover:border-emas/40"
+            }`}
+          >
+            <input
+              type="checkbox"
+              checked={replyAnonymous}
+              onChange={(e) => setReplyAnonymous(e.target.checked)}
+              className="mt-0.5 w-4 h-4 accent-marun"
+            />
+            <span className="text-sm text-teks/80">
+              <span className="font-semibold">Balas sebagai Anonim</span>
+              <span className="block text-xs text-teks/50 mt-0.5">
+                Nama Anda tampil sebagai &quot;Anonim&quot;. Pengasuh tetap dapat
+                melihat identitas asli.
+              </span>
+            </span>
+          </label>
 
           <button
             type="submit"

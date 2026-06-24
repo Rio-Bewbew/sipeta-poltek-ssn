@@ -22,6 +22,11 @@ export default async function AdminDashboard() {
   
   const unansweredThreads = totalThreads - threadsWithPengasuh;
 
+  // Pesan baru yang belum dibaca admin
+  const unreadThreads = await prisma.thread.count({
+    where: { isRead: false },
+  });
+
   return (
     <div className="space-y-8 animate-fade-in-up">
       <div>
@@ -37,6 +42,15 @@ export default async function AdminDashboard() {
           <div className="flex items-end gap-3">
             <span className="text-4xl font-bold text-white">{totalThreads}</span>
             <span className="text-emas text-sm mb-1">Thread</span>
+          </div>
+        </div>
+
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-6 relative overflow-hidden group hover:border-emas/30 transition-colors">
+          <div className="absolute -right-4 -top-4 w-24 h-24 bg-gradient-to-bl from-emas/20 to-transparent rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <p className="text-white/50 text-sm font-medium mb-1">Pesan Baru Belum Dibaca</p>
+          <div className="flex items-end gap-3">
+            <span className="text-4xl font-bold text-white">{unreadThreads}</span>
+            <span className="text-emas text-sm mb-1">🔔 Baru</span>
           </div>
         </div>
 

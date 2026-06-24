@@ -8,22 +8,28 @@ datasource db {
 }
 
 model Thread {
-  id        String   @id @default(cuid())
-  title     String
-  content   String
-  author    String
-  category  String
-  createdAt DateTime @default(now())
-  replies   Reply[]
+  id          String   @id @default(cuid())
+  title       String
+  content     String
+  author      String // nama yang ditampilkan ke publik ("Anonim" jika anonim)
+  authorReal  String? // identitas asli, hanya untuk admin/Pengasuh
+  isAnonymous Boolean  @default(false)
+  category    String
+  isRead      Boolean  @default(false) // sudah dibuka/dibaca admin
+  isAnswered  Boolean  @default(false) // sudah dijawab Pengasuh
+  createdAt   DateTime @default(now())
+  replies     Reply[]
 }
 
 model Reply {
   id          String   @id @default(cuid())
   content     String
-  author      String
+  author      String // nama yang ditampilkan ke publik ("Anonim" jika anonim)
+  authorReal  String? // identitas asli, hanya untuk admin/Pengasuh
+  isAnonymous Boolean  @default(false)
   isPengasuh  Boolean  @default(false)
   upvotes     Int      @default(0)
   createdAt   DateTime @default(now())
   threadId    String
-  thread      Thread   @relation(fields: [threadId], references: [id])
+  thread      Thread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
 }

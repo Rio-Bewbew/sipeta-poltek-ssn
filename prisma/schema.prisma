@@ -20,6 +20,9 @@ model Thread {
   isAnswered  Boolean  @default(false) // sudah dijawab Pengasuh
   createdAt   DateTime @default(now())
   replies     Reply[]
+  
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 }
 
 model Reply {
@@ -33,6 +36,9 @@ model Reply {
   createdAt   DateTime @default(now())
   threadId    String
   thread      Thread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
+
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 }
 
 model AnonymousReport {
@@ -76,3 +82,33 @@ model Kuis {
   penjelasan   String
   rujukanPasal String
 }
+
+enum Role {
+  TARUNA
+  ADMIN
+}
+
+model User {
+  id        String   @id @default(cuid())
+  npm       String   @unique
+  name      String
+  password  String
+  points    Int      @default(0)
+  role      Role     @default(TARUNA)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  threads       Thread[]
+  replies       Reply[]
+  quizAttempts  QuizAttempt[]
+}
+
+model QuizAttempt {
+  id        String   @id @default(cuid())
+  score     Int
+  total     Int
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+

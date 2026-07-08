@@ -80,6 +80,14 @@ export default function KuisClient({ quizQuestions }: { quizQuestions: any[] }) 
       try {
         localStorage.setItem("sipeta-quiz-score", score.toString());
       } catch {}
+
+      // Submit score to database for gamification points
+      fetch("/api/kuis/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ score: correctCount, total: totalQuestions }),
+      }).catch(err => console.error("Failed to submit score", err));
+
       setState("result");
 
       setTimeout(() => {

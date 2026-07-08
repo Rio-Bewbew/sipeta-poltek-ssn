@@ -12,9 +12,8 @@ const navLinks = [
   { href: "/kuis", label: "Kuis" },
   { href: "/forum", label: "Forum" },
   { 
-    href: "https://docs.google.com/forms/d/e/1FAIpQLSfj1fLy01Z45M0v7zOwmxB-CHx1CuXi_gBD9qYrc5SDf2XGeg/viewform?fbzx=7393614586831383883", 
+    href: "/pelaporan", 
     label: "Pelaporan Anonim",
-    external: true 
   },
 ];
 

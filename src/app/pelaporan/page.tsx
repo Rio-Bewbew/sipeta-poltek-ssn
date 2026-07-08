@@ -1,8 +1,44 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function PelaporanAnonim() {
+  const [formData, setFormData] = useState({
+    subject: "",
+    location: "",
+    dateOccurred: "",
+    description: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/pelaporan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (!res.ok) {
+        throw new Error("Gagal mengirim laporan");
+      }
+
+      setIsSuccess(true);
+      setFormData({ subject: "", location: "", dateOccurred: "", description: "" });
+    } catch (err) {
+      setError("Terjadi kesalahan. Silakan coba lagi.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <motion.div 
@@ -55,26 +91,123 @@ export default function PelaporanAnonim() {
           </div>
         </div>
 
-        {/* Iframe Section */}
-        <div className="glass-panel-dark rounded-3xl border border-white/10 p-2 overflow-hidden shadow-2xl relative min-h-[800px]">
-          {/* Loading Indicator for Iframe */}
-          <div className="absolute inset-0 flex items-center justify-center -z-10">
-            <div className="flex flex-col items-center gap-4">
-              <div className="w-10 h-10 border-4 border-emas/30 border-t-emas rounded-full animate-spin"></div>
-              <p className="text-white/60 font-medium">Memuat formulir rahasia...</p>
-            </div>
-          </div>
-          <iframe 
-            src="https://docs.google.com/forms/d/e/1FAIpQLSfj1fLy01Z45M0v7zOwmxB-CHx1CuXi_gBD9qYrc5SDf2XGeg/viewform?embedded=true" 
-            width="100%" 
-            height="1000" 
-            frameBorder="0" 
-            marginHeight={0} 
-            marginWidth={0}
-            className="bg-white/5 rounded-2xl w-full backdrop-blur-xl"
-          >
-            Memuat formulir pelaporan...
-          </iframe>
+        {/* Form Section */}
+        <div className="glass-panel-dark rounded-3xl border border-white/10 p-8 shadow-2xl relative overflow-hidden">
+          <AnimatePresence mode="wait">
+            {isSuccess ? (
+              <motion.div 
+                key="success"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                className="flex flex-col items-center justify-center py-12 text-center space-y-6"
+              >
+                <div className="w-24 h-24 bg-sukses/20 rounded-full flex items-center justify-center border border-sukses/30">
+                  <svg className="w-12 h-12 text-sukses" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-white mb-2">Laporan Berhasil Dikirim</h3>
+                  <p className="text-white/60 max-w-md mx-auto">
+                    Terima kasih. Laporan Anda telah diamankan secara anonim dan akan segera ditindaklanjuti oleh Satuan Pengasuhan.
+                  </p>
+                </div>
+                <button 
+                  onClick={() => setIsSuccess(false)}
+                  className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-colors font-medium"
+                >
+                  Kirim Laporan Baru
+                </button>
+              </motion.div>
+            ) : (
+              <motion.form 
+                key="form"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onSubmit={handleSubmit}
+                className="space-y-6"
+              >
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-white/80 mb-2">Judul / Topik Laporan <span className="text-bahaya">*</span></label>
+                    <input 
+                      type="text" 
+                      required
+                      value={formData.subject}
+                      onChange={(e) => setFormData({...formData, subject: e.target.value})}
+                      placeholder="Contoh: Pelanggaran Jam Malam"
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/20 focus:border-emas focus:ring-1 focus:ring-emas focus:outline-none transition-all"
+                    />
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-white/80 mb-2">Lokasi Kejadian</label>
+                      <input 
+                        type="text" 
+                        value={formData.location}
+                        onChange={(e) => setFormData({...formData, location: e.target.value})}
+                        placeholder="Opsional"
+                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/20 focus:border-emas focus:ring-1 focus:ring-emas focus:outline-none transition-all"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-white/80 mb-2">Waktu Kejadian</label>
+                      <input 
+                        type="text" 
+                        value={formData.dateOccurred}
+                        onChange={(e) => setFormData({...formData, dateOccurred: e.target.value})}
+                        placeholder="Contoh: Tadi malam jam 23.00"
+                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/20 focus:border-emas focus:ring-1 focus:ring-emas focus:outline-none transition-all"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-white/80 mb-2">Deskripsi Kronologi <span className="text-bahaya">*</span></label>
+                    <textarea 
+                      required
+                      rows={6}
+                      value={formData.description}
+                      onChange={(e) => setFormData({...formData, description: e.target.value})}
+                      placeholder="Ceritakan kejadiannya secara detail..."
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/20 focus:border-emas focus:ring-1 focus:ring-emas focus:outline-none transition-all resize-none"
+                    ></textarea>
+                  </div>
+                </div>
+
+                {error && (
+                  <div className="p-4 bg-bahaya/10 border border-bahaya/20 text-bahaya rounded-xl text-sm">
+                    {error}
+                  </div>
+                )}
+
+                <div className="flex items-center gap-4 pt-4 border-t border-white/10">
+                  <button 
+                    type="submit" 
+                    disabled={isSubmitting}
+                    className="px-8 py-3 bg-emas hover:bg-emas-light text-marun-dark font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(234,179,8,0.3)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-marun-dark/30 border-t-marun-dark rounded-full animate-spin"></div>
+                        Mengirim...
+                      </>
+                    ) : (
+                      <>
+                        Kirim Laporan Anonim
+                      </>
+                    )}
+                  </button>
+                  <p className="text-xs text-white/40 flex-1">
+                    Dengan menekan tombol kirim, laporan akan langsung dikunci dan dienkripsi di dalam database sistem.
+                  </p>
+                </div>
+              </motion.form>
+            )}
+          </AnimatePresence>
         </div>
       </motion.div>
     </div>

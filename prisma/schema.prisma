@@ -34,3 +34,13 @@ model Reply {
   threadId    String
   thread      Thread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
 }
+
+model AnonymousReport {
+  id          String   @id @default(cuid())
+  subject     String
+  description String
+  location    String?
+  dateOccurred String?
+  isRead      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}

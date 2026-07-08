@@ -56,6 +56,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { href: "/admin", label: "Dashboard", icon: "📊" },
     { href: "/admin/forum", label: "Kelola Forum", icon: "💬" },
     { href: "/admin/materi", label: "Kelola Materi", icon: "📖" },
+    { href: "/admin/pelaporan", label: "Laporan Anonim", icon: "🕵️" },
   ];
 
   return (

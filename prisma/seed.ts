@@ -1,15 +1,18 @@
 import { PrismaClient } from "@prisma/client";
+import { materiModules } from "../src/data/materi";
+import { caseStudies } from "../src/data/kasus";
+import { quizQuestions } from "../src/data/kuis";
 
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("🌱 Seeding forum data...");
+  console.log("🌱 Seeding database...");
 
-  // Clear existing data
+  // --- Seed Forum Data (Existing) ---
+  console.log("Seeding forum data...");
   await prisma.reply.deleteMany();
   await prisma.thread.deleteMany();
 
-  // Thread 1 — sudah dibaca & sudah dijawab
   const thread1 = await prisma.thread.create({
     data: {
       title: "Bagaimana cara menegur junior yang benar?",
@@ -45,7 +48,6 @@ async function main() {
   });
   console.log(`  ✅ Thread 1 created: ${thread1.id}`);
 
-  // Thread 2 — sudah dibaca & sudah dijawab
   const thread2 = await prisma.thread.create({
     data: {
       title: "Apakah push up anyam termasuk pelanggaran?",
@@ -73,7 +75,6 @@ async function main() {
   });
   console.log(`  ✅ Thread 2 created: ${thread2.id}`);
 
-  // Thread 3 — sudah dibaca & sudah dijawab
   const thread3 = await prisma.thread.create({
     data: {
       title: "Prosedur konfirmasi peminjaman kunci ke Satuan Pengasuhan",
@@ -109,7 +110,6 @@ async function main() {
   });
   console.log(`  ✅ Thread 3 created: ${thread3.id}`);
 
-  // Thread 4 — ANONIM, BELUM DIBACA, BELUM DIJAWAB (untuk demo fitur baru)
   const thread4 = await prisma.thread.create({
     data: {
       title: "Senior menyuruh kegiatan fisik sebelum jam bangun, apakah boleh?",
@@ -125,6 +125,62 @@ async function main() {
     },
   });
   console.log(`  ✅ Thread 4 created (anonim, belum dibaca): ${thread4.id}`);
+
+  // --- Seed Materi Data ---
+  console.log("Seeding Materi data...");
+  await prisma.materi.deleteMany();
+  for (const m of materiModules) {
+    await prisma.materi.create({
+      data: {
+        id: m.id,
+        nomor: m.nomor,
+        judul: m.judul,
+        ringkasan: m.ringkasan,
+        poinKunci: m.poinKunci,
+        kutipanPasal: m.kutipanPasal,
+        praktikBaik: m.praktikBaik,
+        pelanggaran: m.pelanggaran,
+        icon: m.icon,
+      },
+    });
+  }
+  console.log(`  ✅ ${materiModules.length} Materi created`);
+
+  // --- Seed Studi Kasus Data ---
+  console.log("Seeding Studi Kasus data...");
+  await prisma.studiKasus.deleteMany();
+  for (const c of caseStudies) {
+    await prisma.studiKasus.create({
+      data: {
+        id: c.id,
+        nomor: c.nomor,
+        judul: c.judul,
+        situasi: c.situasi,
+        pilihan: c.pilihan as any,
+        umpanBalikBenar: c.umpanBalikBenar,
+        pelajaranUtama: c.pelajaranUtama,
+        rujukanPasal: c.rujukanPasal,
+      },
+    });
+  }
+  console.log(`  ✅ ${caseStudies.length} Studi Kasus created`);
+
+  // --- Seed Kuis Data ---
+  console.log("Seeding Kuis data...");
+  await prisma.kuis.deleteMany();
+  for (const q of quizQuestions) {
+    await prisma.kuis.create({
+      data: {
+        id: q.id,
+        pertanyaan: q.pertanyaan,
+        pilihan: q.pilihan as any,
+        jawabanBenar: q.jawabanBenar,
+        penjelasan: q.penjelasan,
+        rujukanPasal: q.rujukanPasal,
+      },
+    });
+  }
+  console.log(`  ✅ ${quizQuestions.length} Kuis created`);
 
   console.log("✅ Seeding complete!");
 }

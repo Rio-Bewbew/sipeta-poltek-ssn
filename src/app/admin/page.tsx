@@ -1,7 +1,4 @@
 import { prisma } from "@/lib/db";
-import { materiModules } from "@/data/materi";
-import { caseStudies } from "@/data/kasus";
-import { quizQuestions } from "@/data/kuis";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +23,11 @@ export default async function AdminDashboard() {
   const unreadThreads = await prisma.thread.count({
     where: { isRead: false },
   });
+
+  // Data dinamis dari database
+  const countMateri = await prisma.materi.count();
+  const countStudiKasus = await prisma.studiKasus.count();
+  const countKuis = await prisma.kuis.count();
 
   return (
     <div className="space-y-8 animate-fade-in-up">
@@ -76,7 +78,7 @@ export default async function AdminDashboard() {
           <div className="absolute -right-4 -top-4 w-24 h-24 bg-gradient-to-bl from-marun/20 to-transparent rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
           <p className="text-white/50 text-sm font-medium mb-1">Total Modul Pembelajaran</p>
           <div className="flex items-end gap-3">
-            <span className="text-4xl font-bold text-white">{materiModules.length}</span>
+            <span className="text-4xl font-bold text-white">{countMateri}</span>
             <span className="text-marun-light text-sm mb-1">Materi Aktif</span>
           </div>
         </div>
@@ -92,11 +94,11 @@ export default async function AdminDashboard() {
             <h4 className="text-white/80 font-medium mb-2">📚 Materi</h4>
             <div className="flex justify-between items-center text-sm">
               <span className="text-white/50">Status:</span>
-              <span className="text-sukses bg-sukses/10 px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider">Aktif</span>
+              <span className="text-sukses bg-sukses/10 px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider">Aktif (DB)</span>
             </div>
             <div className="flex justify-between items-center text-sm mt-2">
               <span className="text-white/50">Jumlah:</span>
-              <span className="text-white">{materiModules.length} Modul</span>
+              <span className="text-white">{countMateri} Modul</span>
             </div>
           </div>
           
@@ -104,11 +106,11 @@ export default async function AdminDashboard() {
             <h4 className="text-white/80 font-medium mb-2">🔍 Studi Kasus</h4>
             <div className="flex justify-between items-center text-sm">
               <span className="text-white/50">Status:</span>
-              <span className="text-sukses bg-sukses/10 px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider">Aktif</span>
+              <span className="text-sukses bg-sukses/10 px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider">Aktif (DB)</span>
             </div>
             <div className="flex justify-between items-center text-sm mt-2">
               <span className="text-white/50">Jumlah:</span>
-              <span className="text-white">{caseStudies.length} Skenario</span>
+              <span className="text-white">{countStudiKasus} Skenario</span>
             </div>
           </div>
 
@@ -116,11 +118,11 @@ export default async function AdminDashboard() {
             <h4 className="text-white/80 font-medium mb-2">📝 Kuis</h4>
             <div className="flex justify-between items-center text-sm">
               <span className="text-white/50">Status:</span>
-              <span className="text-sukses bg-sukses/10 px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider">Aktif</span>
+              <span className="text-sukses bg-sukses/10 px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider">Aktif (DB)</span>
             </div>
             <div className="flex justify-between items-center text-sm mt-2">
               <span className="text-white/50">Jumlah:</span>
-              <span className="text-white">{quizQuestions.length} Soal</span>
+              <span className="text-white">{countKuis} Soal</span>
             </div>
           </div>
         </div>

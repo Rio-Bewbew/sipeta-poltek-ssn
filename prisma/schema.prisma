@@ -44,3 +44,35 @@ model AnonymousReport {
   isRead      Boolean  @default(false)
   createdAt   DateTime @default(now())
 }
+
+model Materi {
+  id           String   @id
+  nomor        Int
+  judul        String
+  ringkasan    String
+  poinKunci    String[]
+  kutipanPasal Json[]
+  praktikBaik  String[]
+  pelanggaran  String[]
+  icon         String
+}
+
+model StudiKasus {
+  id              String   @id
+  nomor           Int
+  judul           String
+  situasi         String
+  pilihan         Json[] 
+  umpanBalikBenar String
+  pelajaranUtama  String
+  rujukanPasal    String
+}
+
+model Kuis {
+  id           Int      @id @default(autoincrement())
+  pertanyaan   String
+  pilihan      Json[] 
+  jawabanBenar String
+  penjelasan   String
+  rujukanPasal String
+}
